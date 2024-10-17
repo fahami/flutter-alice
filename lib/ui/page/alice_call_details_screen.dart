@@ -45,7 +45,7 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
                 (snapshotCall) => snapshotCall.id == widget.call.id,
                 orElse: null);
             if (call != null) {
-              return _buildMainWidget(context);
+              return _buildMainWidget();
             } else {
               return _buildErrorWidget();
             }
@@ -57,22 +57,23 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
     );
   }
 
-  Widget _buildMainWidget(BuildContext context) {
-    final box = context.findRenderObject() as RenderBox?;
+ Widget _buildMainWidget() {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: AliceConstants.lightRed,
-          key: Key('share_key'),
-          onPressed: () async {
-            Share.share(await _getSharableResponseString(),
-                subject: 'Request Details',
-                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
-            await Clipboard.setData(
-                ClipboardData(text: await _getSharableResponseString()));
+        floatingActionButton: Builder(
+          builder: (BuildContext context) {
+            return FloatingActionButton(
+              backgroundColor: AliceConstants.lightRed,
+              key: Key('share_key'),
+              onPressed: () async {
+                final box = context.findRenderObject() as RenderBox?;
+                Share.share(await _getSharableResponseString(), subject: 'Request Details', sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                await Clipboard.setData(ClipboardData(text: await _getSharableResponseString()));
+              },
+              child: Icon(Icons.share),
+            );
           },
-          child: Icon(Icons.share),
         ),
         appBar: AppBar(
           bottom: TabBar(
