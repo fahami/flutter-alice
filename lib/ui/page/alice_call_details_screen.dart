@@ -45,7 +45,7 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
                 (snapshotCall) => snapshotCall.id == widget.call.id,
                 orElse: null);
             if (call != null) {
-              return _buildMainWidget();
+              return _buildMainWidget(context);
             } else {
               return _buildErrorWidget();
             }
@@ -57,7 +57,8 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
     );
   }
 
-  Widget _buildMainWidget() {
+  Widget _buildMainWidget(BuildContext context) {
+    final box = context.findRenderObject() as RenderBox?;
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -66,7 +67,8 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
           key: Key('share_key'),
           onPressed: () async {
             Share.share(await _getSharableResponseString(),
-                subject: 'Request Details');
+                subject: 'Request Details',
+                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
             await Clipboard.setData(
                 ClipboardData(text: await _getSharableResponseString()));
           },
